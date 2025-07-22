@@ -6,7 +6,6 @@ from loguru import logger as eval_logger
 from functools import partial
 import numpy as np
 import pandas as pd
-from collections import OrderedDict
 
 import datasets
 
@@ -36,7 +35,7 @@ METRICS_FOR_NA = {
 
 hf_home = os.getenv("HF_HOME", "~/.cache/huggingface/")
 base_cache_dir = os.path.expanduser(hf_home)
-with open(Path(__file__).parent / "vsibench.yaml", "r") as f:
+with open(Path(__file__).parent / "vsibench_tiny.yaml", "r") as f:
     raw_data = f.readlines()
     safe_data = []
     for i, line in enumerate(raw_data):
@@ -127,12 +126,12 @@ def vsibench_process_results(doc, results):
 
 def vsibench_aggregate_results(results):
     results = pd.DataFrame(results)
-
+    
     output = {}
 
     for question_type, question_type_indexes in results.groupby('question_type').groups.items():
         per_question_type = results.iloc[question_type_indexes]
-
+        
         if question_type in MCA_QUESTION_TYPES:
             for metric in METRICS_FOR_MCA.keys():
                 output[f"{question_type}_{metric}"] = per_question_type[metric].mean()
@@ -145,44 +144,29 @@ def vsibench_aggregate_results(results):
 
         else:
             raise ValueError(f"Unknown question type: {question_type}")
-
-    if 'object_rel_direction_easy_accuracy' in output:
-        output['object_rel_direction_accuracy'] = sum([
-            output.pop('object_rel_direction_easy_accuracy'),
-            output.pop('object_rel_direction_medium_accuracy'),
-            output.pop('object_rel_direction_hard_accuracy'),
-        ]) / 3.
-
+    
+    output['object_rel_direction_accuracy'] = sum([
+        output.pop('object_rel_direction_easy_accuracy'),
+        output.pop('object_rel_direction_medium_accuracy'),
+        output.pop('object_rel_direction_hard_accuracy'),
+    ]) / 3.
+    
     output['overall'] = sum([_ for _ in output.values()]) / len(output)
     eval_logger.info(f"Evaluation results: {output}")
 
-    results = OrderedDict()
-    results["overall"] = output["overall"].item() * 100.
+    # return results as a list
+    order = ['overall', 'object_counting_MRA:.5:.95:.05', 'object_abs_distance_MRA:.5:.95:.05', 
+             'object_size_estimation_MRA:.5:.95:.05', 'room_size_estimation_MRA:.5:.95:.05', 'object_rel_distance_accuracy',
+             'object_rel_direction_accuracy', 'route_planning_accuracy', 'obj_appearance_order_accuracy']
+
+    final_list = []
+    for key in order:
+        final_list.append(round(output[key] * 100, 2))
     
-    for question_type in [
-        "object_counting",
-        "object_abs_distance",
-        "object_size_estimation",
-        "room_size_estimation",
-        "object_rel_distance",
-        "object_rel_direction",
-        "route_planning",
-        "obj_appearance_order",
-    ]:
-        for metric in [
-            "accuracy",
-            "MRA:.5:.95:.05",
-        ]:
-            key = f"{question_type}_{metric}"
-            if key in output:
-                results[key] = output[key].item() * 100.
+    eval_logger.info(f"Final list: {final_list}")
+    print(f"Final list: {final_list}")
+    
+    output['final_list'] = final_list
+    eval_logger.info(f"Listed results: {output['final_list']}")
 
-    tabulated_keys = ", ".join([_ for _ in results.keys()])
-    tabulated_results = ", ".join([f"{_:.3f}" for _ in results.values()])
-    eval_logger.info(f"Tabulated results: {tabulated_keys}")
-    eval_logger.info(f"Tabulated results: {tabulated_results}")
-
-    results["tabulated_keys"] = tabulated_keys
-    results["tabulated_results"] = tabulated_results
-
-    return results
+    return output['overall'] * 100.

@@ -69,6 +69,14 @@ for model in "${models[@]}"; do
         model_family="gemini_api"
         model_args="model_version=gemini-2.0-flash-exp,modality=video"
         ;;
+    "gemini_2p5_pro")
+        model_family="gemini_thinking_api"
+        model_args="model_version=gemini-2.5-pro,modality=video,continual_mode=True,response_persistent_folder=/home/anjaliwgupta_google_com/thinking-in-space/logs/20250722"
+        ;;
+    "gemini_2p5_flash")
+        model_family="gemini_thinking_api"
+        model_args="model_version=gemini-2.5-flash,modality=video,continual_mode=True,response_persistent_folder=/home/anjaliwgupta_google_com/thinking-in-space/logs/20250722"
+        ;;
     "gpt_4o_2024_08_06_f16")
         model_family="gpt4v"
         model_args="model_version=gpt-4o-2024-08-06,modality=video,max_frames_num=16"

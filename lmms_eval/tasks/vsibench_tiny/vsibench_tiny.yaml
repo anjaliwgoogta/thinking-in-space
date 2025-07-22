@@ -1,9 +1,9 @@
-dataset_path: nyu-visionx/VSI-Bench
+dataset_path: spatial-tuning/vsibench-tiny
 dataset_kwargs:
   token: True
   cache_dir: vsibench
   video: True
-task: vsibench
+task: vsibench_tiny
 test_split: test
 output_type: generate_until
 process_docs: !function utils.process_docs
