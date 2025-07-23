@@ -34,8 +34,8 @@ lmms_eval_specific_kwargs:
     na_post_prompt: "Do not response anything other than a single number!"
   gemini_thinking_api:
     pre_prompt: ""
-    mca_post_prompt: "Please make sure your response ends with the single multiple-choice letter answer!"
-    na_post_prompt: "Please make sure your response ends with the single number answer!"
+    mca_post_prompt: "Please make sure your response ends with the single multiple-choice letter answer! Please provide your answer in plain text only, with no markdown, LaTeX, or any special formatting."
+    na_post_prompt: "Please make sure your response ends with the single number answer! Please provide your answer in plain text only, with no markdown, LaTeX, or any special formatting."
   gpt4v:
     pre_prompt: ""
     mca_post_prompt: "Answer with the option's letter from the given choices directly."

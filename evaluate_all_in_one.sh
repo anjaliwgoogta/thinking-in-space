@@ -71,11 +71,11 @@ for model in "${models[@]}"; do
         ;;
     "gemini_2p5_pro")
         model_family="gemini_thinking_api"
-        model_args="model_version=gemini-2.5-pro,modality=video,continual_mode=True,response_persistent_folder=/home/anjaliwgupta_google_com/thinking-in-space/logs/20250722"
+        model_args="model_version=gemini-2.5-pro,modality=video"
         ;;
     "gemini_2p5_flash")
         model_family="gemini_thinking_api"
-        model_args="model_version=gemini-2.5-flash,modality=video,continual_mode=True,response_persistent_folder=/home/anjaliwgupta_google_com/thinking-in-space/logs/20250722"
+        model_args="model_version=gemini-2.5-flash,modality=video"
         ;;
     "gpt_4o_2024_08_06_f16")
         model_family="gpt4v"
